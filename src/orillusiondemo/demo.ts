@@ -29,7 +29,7 @@ export default class demo {
         // 创建一个物体，设置它的网格以及材质还有旋转
         const obj: Object3D = new Object3D()
         let mr: MeshRenderer = obj.addComponent(MeshRenderer)
-        mr.geometry = new BoxGeometry(5, 5, 5)
+        mr.geometry = new BoxGeometry(5, 3, 5)
         mr.material = new LitMaterial()
         obj.rotationY = 45
         // 物体添加到场景中
