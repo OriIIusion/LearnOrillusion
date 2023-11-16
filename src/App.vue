@@ -1,12 +1,8 @@
-
-
 <script setup lang="ts">
-import demo from './orillusiondemo/demo';
+import demo from './orillusion/demo';
 new demo().run();
 </script>
 
-<template>
-</template>
+<template></template>
 
-<style scoped>
-</style>
+<style scoped></style>
