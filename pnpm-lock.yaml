@@ -8,6 +8,9 @@ dependencies:
   '@orillusion/core':
     specifier: ^0.7.1
     version: 0.7.1
+  '@orillusion/stats':
+    specifier: ^0.2.1
+    version: 0.2.1
   vue:
     specifier: ^3.3.4
     version: 3.3.8(typescript@5.2.2)
@@ -254,6 +257,12 @@ packages:
 
   /@orillusion/core@0.7.1:
     resolution: {integrity: sha512-NgCKoOpK0NX+PoyVRhHLMsMCFkM9W3aoMwSA1ZjH5mpL2OpxZAiOe6/GMVLPyDmFnmnMDcV2MaBkmSf33n1oyw==}
+    dev: false
+
+  /@orillusion/stats@0.2.1:
+    resolution: {integrity: sha512-ibbTUcTzxmQFZuD7azLdZw+DUyMZBSEdk1ltuj5w1FsaQdHzEHQhPVA01yezVxcZ/SV35xW0HSK4GK5+93PKuQ==}
+    dependencies:
+      '@orillusion/core': 0.7.1
     dev: false
 
   /@vitejs/plugin-vue@4.4.1(vite@4.5.0)(vue@3.3.8):

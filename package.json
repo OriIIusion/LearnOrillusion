@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@orillusion/core": "^0.7.1",
+    "@orillusion/stats": "^0.2.1",
     "vue": "^3.3.4"
   },
   "devDependencies": {
