@@ -17,6 +17,7 @@ export default class demo {
         //新建一个场景 并且给场景添加一个天空盒 添加FPS显示
         let scene = new Scene3D();
         let sky = scene.addComponent(AtmosphericComponent);
+        sky.sunY = 0.8
         scene.addComponent(Stats);
 
         //新建相机
@@ -26,7 +27,7 @@ export default class demo {
         camera.perspective(60, window.innerWidth / window.innerHeight, 1, 5000);
         //设置相机控制器
         let controller = cameraObj.addComponent(HoverCameraController);
-        controller.setCamera(45, -20, 30);
+        controller.setCamera(45, -20, 60);
         //相机添加到场景中
         scene.addChild(cameraObj);
 
@@ -39,7 +40,6 @@ export default class demo {
         this.light.intensity = 30;
         this.light.lightColor = KelvinUtil.color_temperature_to_rgb(5355);
         this.light.castShadow = true
-        sky.relativeTransform = this.light.transform;
         //灯光添加到场景中
         scene.addChild(lightObj);
 
@@ -81,15 +81,22 @@ export default class demo {
             remove:async()=>{
                 let index = Math.floor(list.length*Math.random());
                 let box = list[index]
-                this.view.scene.removeChild(box);
-                box.destroy(true);
-                list.splice(index,1); 
+                if(box)
+                {
+                    this.view.scene.removeChild(box);
+                    box.destroy(true);
+                    list.splice(index,1); 
+                }
             }
         }
+        await buttons.add();
         let properties ={
             Scale:1,
             color:new Color(0.6,0.4,0.2)
         }
+        let lightTrans = this.light.transform;
+        console.log(lightTrans);
+        
         const gui = new dat.GUI();
         let button = gui.addFolder("Add Remove");
         button.add(buttons,"add")
@@ -104,6 +111,11 @@ export default class demo {
         property.addColor(properties,"color").onChange((value)=>{
             mat.baseColor = new Color(value.r/255,value.g/255,value.b/255)
         })
+        let light = gui.addFolder("Light");
+        light.add(lightTrans,"rotationX",-180,180,1)
+        light.add(lightTrans,"rotationY",-180,180,1)
+        light.add(lightTrans,"rotationZ",-180,180,1)
+        light.add(this.light,"castShadow")
     }
 }
 class RotateScript extends ComponentBase
