@@ -1,4 +1,4 @@
-import { AtmosphericComponent, Camera3D, ComponentBase, DirectLight, Engine3D, HoverCameraController, Object3D, Scene3D, View3D, KelvinUtil, Object3DUtil, BoxGeometry, LitMaterial, MeshRenderer } from "@orillusion/core";
+import { AtmosphericComponent, Camera3D, ComponentBase, DirectLight, Engine3D, HoverCameraController, Object3D, Scene3D, View3D, KelvinUtil, Object3DUtil } from "@orillusion/core";
 import { Stats } from '@orillusion/stats';
 
 export default class demo {
@@ -59,16 +59,7 @@ export default class demo {
     }
 
     async initscene() {
-        let boxObj = new Object3D();
-        let mr = boxObj.addComponent(MeshRenderer);
-        let mat = new LitMaterial();
-        mr.geometry = new BoxGeometry(1, 1, 1);
-        mr.material = mat;
-        let list: Object3D[] = [];
-
-        let add = async function add(){
-
-        } 
+        //to do
     }
 }
 //自旋转组件
