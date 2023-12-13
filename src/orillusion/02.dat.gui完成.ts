@@ -3,6 +3,7 @@ import { Stats } from '@orillusion/stats';
 import dat from "dat.gui";
 
 export default class demo {
+    //将可能在多个方法或者类的外部使用到的属性声明出来
     view: View3D;
     light: DirectLight;
     async run() {
@@ -58,7 +59,7 @@ export default class demo {
         //初始化场景 添加dat.gui
         await this.initscene();
     }
-    
+
     async initscene() {
         //新建一个Box并添加网格渲染组件
         let boxObj = new Object3D();
@@ -76,6 +77,7 @@ export default class demo {
             add: async () => {
                 let box = boxObj.clone();
                 box.addComponent(RotateScript)
+                //设置生成的box的xyz位置为-10到10之间的随机值
                 box.x = Math.random() * 20 - 10;
                 box.y = Math.random() * 20 - 10;
                 box.z = Math.random() * 20 - 10;
@@ -122,7 +124,7 @@ export default class demo {
             }
         })
         boxs.addColor(Boxs, "color").onChange((value) => {
-            mat.baseColor = new Color(value[0] / 255, value[1] / 255, value[2] / 255) 
+            mat.baseColor = new Color(value[0] / 255, value[1] / 255, value[2] / 255)
         })
         //展开所有列表
         button.open();
