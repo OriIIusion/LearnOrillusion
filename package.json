@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@orillusion/core": "^0.7.1",
+    "@orillusion/physics": "^0.2.1",
     "@orillusion/stats": "^0.2.1",
     "@types/dat.gui": "^0.7.12",
     "dat.gui": "^0.7.9",
