@@ -1,3 +1,4 @@
+import  dat  from 'dat.gui';
 import { BoxGeometry, Camera3D, Engine3D, LitMaterial, MeshRenderer, Object3D, Scene3D, View3D, Color, Object3DUtil, Vector3, AtmosphericComponent, HoverCameraController, ColliderComponent, BoxColliderShape, KeyEvent, SphereColliderShape, DirectLight, SphereGeometry, ComponentBase, KeyCode, KelvinUtil } from '@orillusion/core';
 import { Stats } from '@orillusion/stats';
 import { Physics, Rigidbody } from "@orillusion/physics";
@@ -115,6 +116,15 @@ export default class demo {
         mr.material = mat;
         mat.baseColor = KelvinUtil.color_temperature_to_rgb(1325);
         Engine3D.res.addPrefab("ball", sphereObj);
+
+        //添加提示
+        const gui = new dat.GUI();
+        let tips = {
+            tip1:"按下wasd移动准心",
+            tip2:"按下空格键发射小球"
+        }
+        gui.add(tips,"tip1");
+        gui.add(tips,"tip2");
 
         //创建View3D对象 开始渲染
         this.view = new View3D();
