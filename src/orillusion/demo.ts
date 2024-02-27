@@ -4,13 +4,15 @@ export default class demo {
     view: View3D;
     canvas: GUICanvas;
     buttonIndex: number = 0;
-    buttonBgGroup: UIImage[] = [];
-    buttonIconGroup: UIImage[] = [];
     sprite_gray: GUISprite;
     sprite_orange: GUISprite;
+    buttonBgGroup: UIImage[] = [];
+    buttonIconGroup: UIImage[] = [];
     poiGroup: Object3D[] = [];
     boardGroup: Object3D[] = [];
     async run() {
+        console.log("07.UI与交互");
+        //init engine
         await Engine3D.init();
 
         //set shadow
@@ -18,12 +20,12 @@ export default class demo {
         Engine3D.setting.shadow.shadowSize = 2048;
         Engine3D.setting.shadow.shadowBound = 64;
 
-        //create scene,add sky and FPS
+        //create scene,add sky and fps
         let scene = new Scene3D();
         scene.addComponent(AtmosphericComponent);
         scene.addComponent(Stats);
 
-        //create camera
+        //create camera and controller
         let camera = CameraUtil.createCamera3DObject(scene);
         camera.perspective(60, Engine3D.aspect, 1, 5000);
         let controller = camera.object3D.addComponent(HoverCameraController);
@@ -44,134 +46,29 @@ export default class demo {
         this.view.camera = camera;
         Engine3D.startRenderView(this.view);
 
+        //加载字体
         await Engine3D.res.loadFont("/font/deyihei.fnt");
+        //获取canvas，后续将添加UI
         this.canvas = this.view.enableUICanvas();
+        //创建基础场景
         await this.initScene();
+        //创建2DUI
         await this.create2DButton();
+        //创建3DUI
         await this.create3DUI();
-    }
-    private async create3DUI() {
-        let texts = ["Hi,I'm Box!", "Hi,I'm Sphere!", "Hi,I'm Torus!", "Hi,I'm Box too!"];
-        for (let i = 0; i < 4; i++) {
-            let panelRoot = new Object3D();
-            this.boardGroup.push(panelRoot);
-            let pos = this.poiGroup[i].transform.localPosition;
-            panelRoot.localPosition = new Vector3(pos.x, pos.y + 5, pos.z);
-            panelRoot.localScale = new Vector3(0.05, 0.05, 0.05);
-            let panel = panelRoot.addComponent(WorldPanel);
-            panel.billboard = BillboardType.BillboardXYZ;
-            panel.depthTest = false;
-            this.canvas.addChild(panelRoot);
-
-            let BgObj = new Object3D();
-            let Bg = BgObj.addComponent(UIImage);
-            Bg.isShadowless = true;
-            Bg.uiTransform.resize(160, 50);
-            Bg.color = new Color(0.1, 0.4, 0.5, 0.9);
-
-            let text = BgObj.addComponent(UITextField);
-            text.text = texts[i];
-            text.font = "得意黑";
-            text.fontSize = 30;
-            text.color = new Color(1, 1, 1, 1);
-            text.alignment = TextAnchor.MiddleCenter;
-            BgObj.addComponent(UIShadow);
-            panelRoot.addChild(BgObj);
-            panelRoot.transform.enable = false;
-        }
-    }
-    private async create2DButton() {
-        let panelRoot = new Object3D();
-        panelRoot.addComponent(ViewPanel);
-        this.canvas.addChild(panelRoot);
-
-        let star_gray = new BitmapTexture2D();
-        let star_orange = new BitmapTexture2D();
-        await star_gray.load("/icon/star_gray.png");
-        await star_orange.load("/icon/star_orange.png");
-        this.sprite_gray = makeAloneSprite("sprite_gray", star_gray);
-        this.sprite_orange = makeAloneSprite("sprite_orange", star_orange);
-
-        for (let i = 0; i < 4; i++) {
-            let buttonRoot = new Object3D();
-            buttonRoot.data = i + 1;
-            buttonRoot.addComponent(UIInteractive).interactive = true;
-
-            let bgImg = buttonRoot.addComponent(UIImage);
-            this.buttonBgGroup.push(bgImg);
-            bgImg.color = new Color(0.2, 0.2, 0.2, 0.9);
-            bgImg.uiTransform.resize(180, 60);
-            bgImg.uiTransform.setXY(600, 150 - 100 * i);
-            buttonRoot.addEventListener(PointerEvent3D.PICK_CLICK_GUI, this.Click, this, buttonRoot.data);
-
-            let iconObj = new Object3D();
-            buttonRoot.addChild(iconObj);
-            let icon = iconObj.addComponent(UIImage);
-            this.buttonIconGroup.push(icon);
-            icon.uiTransform.resize(40, 40);
-            icon.uiTransform.setXY(-65, 0);
-            icon.sprite = this.sprite_gray;
-
-            let textObj = new Object3D();
-
-            buttonRoot.addChild(textObj);
-            let text = textObj.addComponent(UITextField);
-            text.fontSize = 42;
-            text.text = "Object" + String(i + 1);
-            text.font = "得意黑";
-            text.color = new Color(1, 1, 1, 1);
-            text.uiTransform.resize(180, 60);
-            text.uiTransform.setXY(60, 0);
-            text.alignment = TextAnchor.MiddleLeft;
-            textObj.addComponent(UIShadow);
-
-            panelRoot.addChild(buttonRoot);
-        }
-    }
-    private Click(e: PointerEvent3D) {
-        if (e.param == this.buttonIndex) {
-            this.buttonIndex = 0;
-            this.resetButton();
-        } else {
-            let clickedButton = this.buttonBgGroup[e.param - 1];
-            let oldButton = this.buttonBgGroup[this.buttonIndex - 1];
-            let clickedIcon = this.buttonIconGroup[e.param - 1];
-            let oldIcon = this.buttonIconGroup[this.buttonIndex - 1];
-            let board = this.boardGroup[e.param - 1];
-            let oldBoard = this.boardGroup[this.buttonIndex - 1];
-            clickedButton.color = new Color(0.1, 0.4, 0.5, 0.9);
-            clickedIcon.sprite = this.sprite_orange;
-            board.transform.enable = true;
-            if (oldButton) {
-                oldButton.color = new Color(0.2, 0.2, 0.2, 0.9);
-                oldIcon.sprite = this.sprite_gray;
-                oldBoard.transform.enable = false;
-            }
-            this.buttonIndex = e.param;
-        }
-    }
-
-    private resetButton() {
-        for (let i = 0; i < this.buttonBgGroup.length; i++) {
-            this.buttonBgGroup[i].color = new Color(0.2, 0.2, 0.2, 0.9);
-            this.buttonIconGroup[i].sprite = this.sprite_gray;
-            this.boardGroup[i].transform.enable = false;
-        }
     }
     private async initScene() {
         //添加地面
         {
-            let floor = Object3DUtil.GetSingleCube(100, 1, 100, 0.6, 0.4, 0.1);
+            let floor = Object3DUtil.GetSingleCube(100, 1, 100, 0.4, 0.2, 0.1);
             floor.y = -0.5;
             this.view.scene.addChild(floor);
         }
-
         //创建共用材质
         let mat = new LitMaterial();
-        mat.baseColor = new Color(0.4, 0.7, 0.2);
+        mat.baseColor = new Color(0.3, 0.6, 0.8);
         mat.metallic = 0.2;
         mat.roughness = 0;
-
         //添加目标点1 box
         {
             let box = new Object3D();
@@ -217,6 +114,132 @@ export default class demo {
             box.x = box.z = 15;
             this.poiGroup.push(box);
             this.view.scene.addChild(box);
+        }
+    }
+    private async create2DButton() {
+        //创建viewpanel viewpanel是2DUI的载体
+        let panelRoot = new Object3D();
+        panelRoot.addComponent(ViewPanel);
+        this.canvas.addChild(panelRoot);
+
+        //制作两个sprite,一个是灰色星星，一个是橙色星星，用于按钮上图标的切换
+        let star_gray = new BitmapTexture2D();
+        let star_orange = new BitmapTexture2D();
+        await star_gray.load("/icon/star_gray.png");
+        await star_orange.load("/icon/star_orange.png");
+        this.sprite_gray = makeAloneSprite("sprite_gray", star_gray);
+        this.sprite_orange = makeAloneSprite("sprite_orange", star_orange);
+
+        //制作4个按钮
+        for (let i = 0; i < 4; i++) {
+            let buttonRoot = new Object3D();
+            buttonRoot.data = i + 1;
+            //添加UI交互组件 添加UI点击事件
+            buttonRoot.addComponent(UIInteractive).interactive = true;
+            buttonRoot.addEventListener(PointerEvent3D.PICK_CLICK_GUI, this.Click, this, buttonRoot.data);
+
+            //添加背景图片，这里只是更改了一下颜色，设置每个按钮的大小与位置
+            let bgImg = buttonRoot.addComponent(UIImage);
+            this.buttonBgGroup.push(bgImg);
+            bgImg.color = new Color(0.2, 0.2, 0.2, 0.9);
+            bgImg.uiTransform.resize(180, 60);
+            bgImg.uiTransform.setXY(-300 + 200 * i, 400);
+
+            //添加icon作为背景的子物体，这里设置位置是相对于背景的位置
+            let iconObj = new Object3D();
+            buttonRoot.addChild(iconObj);
+            let icon = iconObj.addComponent(UIImage);
+            this.buttonIconGroup.push(icon);
+            icon.uiTransform.resize(40, 40);
+            icon.uiTransform.setXY(-65, 0);
+            icon.sprite = this.sprite_gray;
+
+            //添加text作为背景的子物体
+            let textObj = new Object3D();
+            buttonRoot.addChild(textObj);
+            let text = textObj.addComponent(UITextField);
+            text.fontSize = 42;
+            text.text = "Object" + String(i + 1);
+            text.font = "得意黑";
+            text.color = new Color(1, 1, 1, 1);
+            text.uiTransform.resize(180, 60);
+            text.uiTransform.setXY(60, 0);
+            text.alignment = TextAnchor.MiddleLeft;
+            textObj.addComponent(UIShadow);
+
+            //将button根节点添加到viewpanel中
+            panelRoot.addChild(buttonRoot);
+        }
+    }
+    private async create3DUI() {
+        let texts = ["Hi,I'm Box!", "Hi,I'm Sphere!", "Hi,I'm Torus!", "Hi,I'm Box too!"];
+        //创建4个3DUI面板，用于显示目标点的信息
+        for (let i = 0; i < 4; i++) {
+            //创建worldpanel,worldpanel是3DUI的载体
+            let panelRoot = new Object3D();
+            this.boardGroup.push(panelRoot);
+            let pos = this.poiGroup[i].transform.localPosition;
+            panelRoot.localPosition = new Vector3(pos.x, pos.y + 5, pos.z);
+            panelRoot.localScale = new Vector3(0.05, 0.05, 0.05);
+            let panel = panelRoot.addComponent(WorldPanel);
+            panel.billboard = BillboardType.BillboardXYZ;
+            panel.depthTest = false;
+            this.canvas.addChild(panelRoot);
+
+            //添加背景图片，修改颜色
+            let BgObj = new Object3D();
+            let Bg = BgObj.addComponent(UIImage);
+            Bg.isShadowless = true;
+            Bg.uiTransform.resize(160, 50);
+            Bg.color = new Color(0.1, 0.4, 0.5, 0.9);
+
+            //添加文字
+            let text = BgObj.addComponent(UITextField);
+            text.text = texts[i];
+            text.font = "得意黑";
+            text.fontSize = 30;
+            text.color = new Color(1, 1, 1, 1);
+            text.alignment = TextAnchor.MiddleCenter;
+            BgObj.addComponent(UIShadow);
+            panelRoot.addChild(BgObj);
+            panelRoot.transform.enable = false;
+        }
+    }
+
+    private Click(e: PointerEvent3D) {
+        //按钮的逻辑是互斥按钮，点击一个按钮，其他按钮的图标变为灰色，点击的按钮图标变为橙色，并且背景颜色也有变化
+        //如果点击已经选中的按钮，则已经按下的按钮会再次切换，变为未选中
+        if (e.param == this.buttonIndex) {
+            this.buttonIndex = 0;
+            this.resetButton();
+        } else {
+            let clickedButton = this.buttonBgGroup[e.param - 1];
+            let oldButton = this.buttonBgGroup[this.buttonIndex - 1];
+            let clickedIcon = this.buttonIconGroup[e.param - 1];
+            let oldIcon = this.buttonIconGroup[this.buttonIndex - 1];
+            let board = this.boardGroup[e.param - 1];
+            let oldBoard = this.boardGroup[this.buttonIndex - 1];
+            //通过按钮的图标以及背景颜色的改变，来展示按钮的是否选中的状态
+            clickedButton.color = new Color(0.1, 0.4, 0.5, 0.9);
+            clickedIcon.sprite = this.sprite_orange;
+            board.transform.enable = true;
+            if (oldButton) {
+                oldButton.color = new Color(0.2, 0.2, 0.2, 0.9);
+                oldIcon.sprite = this.sprite_gray;
+                oldBoard.transform.enable = false;
+            }
+            this.buttonIndex = e.param;
+        }
+    }
+    //重置按钮后，每个按钮恢复默认的背景颜色，icon使用默认的灰色星星，场景中展示牌也隐藏
+    /*This function sets the color of each button's background to its default color,
+     sets the icon of each button to the default star icon, and hides the corresponding
+     information board.*/
+    private resetButton(): void {
+        for (let i = 0; i < this.buttonBgGroup.length; i++) {
+            this.buttonBgGroup[i].color = new Color(0.2, 0.2, 0.2, 0.9);
+            this.buttonIconGroup[i].sprite = this.sprite_gray;
+            this.boardGroup[i].transform.enable = false;
         }
     }
 }
