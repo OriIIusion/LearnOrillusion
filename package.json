@@ -10,9 +10,12 @@
   },
   "dependencies": {
     "@orillusion/core": "^0.7.2",
+    "@orillusion/graphic": "^0.1.1",
     "@orillusion/physics": "^0.2.2",
     "@orillusion/stats": "^0.2.2",
+    "@types/d3": "^7.4.3",
     "@types/dat.gui": "^0.7.12",
+    "d3": "^7.9.0",
     "dat.gui": "^0.7.9",
     "vue": "^3.4.15"
   },
