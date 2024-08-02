@@ -5,9 +5,39 @@
     <link rel="icon" type="image" href="/texture/logo_white.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Orillusion学习</title>
+    <link rel="stylesheet" href="index.css">
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
+    <div class="menu">
+      <a class="sample active" target="01-rotatebox">Rotate Box</a>
+      <a class="sample" target="02-dat.gui">Dat.gui</a>
+      <a class="sample" target="03-moveableLight">MoveableLight</a>
+      <a class="sample" target="04-shootBox">ShootBox</a>
+      <a class="sample" target="05-shootBox2">ShootBox2</a>
+      <a class="sample" target="06-eatBox">EatBox</a>
+      <a class="sample" target="07-cameraAndController">CameraAndController</a>
+      <a class="sample" target="08-uiAndInteraction">UIAndInteraction</a>
+      <a class="sample" target="09-geojson">GeoJson</a>
+    </div>
+    <iframe></iframe>
+    
+    <script>
+      const iframe = document.querySelector('iframe');
+      const buttons = document.querySelectorAll('.sample');
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          location.hash = button.target;
+          iframe.src = './samples/'+button.target+'.html'
+          document.querySelector('.active')?.classList.remove('active');
+          button.classList.add('active');
+        });
+      });
+      if(window.location.hash){
+        document.querySelector(`[target='${window.location.hash.slice(1)}']`).click()
+      }
+      else{
+        document.querySelector('.active').click();
+      }
+    </script>
   </body>
 </html>

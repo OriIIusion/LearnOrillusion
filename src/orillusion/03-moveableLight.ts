@@ -1,4 +1,4 @@
-import { BoxGeometry, Camera3D, ComponentBase, Engine3D, LitMaterial, MeshRenderer, Object3D, Scene3D, View3D, Color, Object3DUtil, PointLight, Vector3} from "@orillusion/core";
+import { BoxGeometry, Camera3D, ComponentBase, Engine3D, LitMaterial, MeshRenderer, Object3D, Scene3D, View3D, Color, Object3DUtil, PointLight,  PointerEvent3D, Vector3,ColliderComponent, BlendMode, UnLitMaterial } from "@orillusion/core";
 import { Stats } from '@orillusion/stats';
 import dat from "dat.gui";
 
@@ -6,9 +6,10 @@ export default class demo {
     light: PointLight;
     async run() {
         console.log("03.灯光跟随鼠标");
-        //设置阴影 初始化引擎
+        //设置阴影 拾取事件类型 初始化引擎
         Engine3D.setting.shadow.pointShadowBias = 0.0001;
         Engine3D.setting.shadow.type = "HARD";
+        Engine3D.setting.pick.mode = "pixel";
         await Engine3D.init();
 
         //新建一个场景 添加FPS显示
@@ -68,11 +69,32 @@ export default class demo {
             }
         }
 
+        //创建辅助拾取对象
+        let helper = new Object3D();
+        let mr = helper.addComponent(MeshRenderer);
+        mr.geometry = new BoxGeometry(100, 100, 1);
+        //设置为完全透明
+        let mat = new UnLitMaterial();
+        mat.baseColor = new Color(1, 1, 1, 0);
+        mat.blendMode = BlendMode.ALPHA;
+        mr.material = mat
+        helper.z = 5
+        //添加ColliderComponent组件，才可以响应拾取事件。
+        helper.addComponent(ColliderComponent)
+        //给此对象添加PICK_MOVE事件监听器，当鼠标在对象上移动时，调用onMove方法
+        helper.addEventListener(PointerEvent3D.PICK_MOVE, this.onMove, this)
+        scene.addChild(helper)
+
         //创建View3D对象 开始渲染
         let view = new View3D();
         view.scene = scene;
         view.camera = camera;
         Engine3D.startRenderView(view);
+    }
+    private onMove(e: PointerEvent3D) {
+        //e.data.pickInfo.worldPos中有点击接触点的世界坐标
+        this.light.transform.x = e.data.pickInfo.worldPos.x
+        this.light.transform.y = e.data.pickInfo.worldPos.y
     }
 }
 //自旋转组件
@@ -83,3 +105,4 @@ class RotateScript extends ComponentBase {
         this.object3D.rotationZ += 1.5;
     }
 }
+new demo().run();

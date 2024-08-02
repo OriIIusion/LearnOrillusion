@@ -1,0 +1,40 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+}
+
+.menu {
+    width: 200px;
+    height: 100%;
+}
+
+.sample {
+    display: block;
+}
+
+a {
+    color: #081863;
+    padding: 5px;
+    cursor: pointer;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a.active {
+    color: red
+}

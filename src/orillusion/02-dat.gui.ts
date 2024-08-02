@@ -138,3 +138,4 @@ class RotateScript extends ComponentBase {
         this.object3D.rotationY += 1;
     }
 }
+new demo().run();

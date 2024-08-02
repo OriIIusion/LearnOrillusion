@@ -243,3 +243,4 @@ export default class demo {
         }
     }
 }
+new demo().run();

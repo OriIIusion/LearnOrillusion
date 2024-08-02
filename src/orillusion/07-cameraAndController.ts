@@ -237,3 +237,4 @@ export default class demo {
         hoverCamera.open();
     }
 }
+new demo().run();

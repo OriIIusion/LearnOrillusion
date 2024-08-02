@@ -204,3 +204,4 @@ class MoveScript extends ComponentBase {
         }
     }
 }
+new demo().run();
