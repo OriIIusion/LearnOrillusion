@@ -12,14 +12,15 @@ export default class demo {
     flyController: FlyCameraController;
     hoverController: HoverCameraController;
     async run() {
-        console.log("06.相机与控制器");
+        console.log("相机与控制器");
         await Engine3D.init();
         Engine3D.setting.shadow.shadowBound = 200;
         Engine3D.setting.shadow.shadowSize = 2048;
+        Engine3D.setting.shadow.shadowBias = 0.01;
 
         //新建场景 添加天空盒子和性能统计
         this.scene = new Scene3D();
-        let sky = this.scene.addComponent(AtmosphericComponent);
+        const sky = this.scene.addComponent(AtmosphericComponent);
         this.scene.addComponent(Stats);
 
         //新建transform相机 通过改变相机的位置和旋转来控制相机
@@ -51,9 +52,9 @@ export default class demo {
         this.hoverController.enable = false;
 
         //添加光源
-        let lightObj = new Object3D();
-        let light = lightObj.addComponent(DirectLight);
-        light.intensity = 50;
+        const lightObj = new Object3D();
+        const light = lightObj.addComponent(DirectLight);
+        light.intensity = 2;
         light.castShadow = true;
         lightObj.rotationX = 60;
         lightObj.rotationY = 50;
@@ -74,21 +75,21 @@ export default class demo {
     private async initScene() {
         //添加地面
         {
-            let floor = Object3DUtil.GetSingleCube(50, 1, 50, 0.6, 0.4, 0.1);
+            const floor = Object3DUtil.GetSingleCube(50, 1, 50, 0.6, 0.4, 0.1);
             floor.y = -0.5;
             this.scene.addChild(floor);
         }
 
         //创建共用材质
-        let mat = new LitMaterial();
+        const mat = new LitMaterial();
         mat.baseColor = new Color(0.4, 0.7, 0.2);
         mat.metallic = 0.2;
         mat.roughness = 0;
 
         //添加目标点1 box
         {
-            let box = new Object3D();
-            let mr = box.addComponent(MeshRenderer);
+            const box = new Object3D();
+            const mr = box.addComponent(MeshRenderer);
             mr.geometry = new BoxGeometry(5, 5, 5);
             mr.material = mat;
             box.y = 2.5;
@@ -97,8 +98,8 @@ export default class demo {
         }
         //添加目标点2 sphere
         {
-            let sphere = new Object3D();
-            let mr = sphere.addComponent(MeshRenderer);
+            const sphere = new Object3D();
+            const mr = sphere.addComponent(MeshRenderer);
             mr.geometry = new SphereGeometry(2.5, 20, 20);
             mr.material = mat;
             sphere.y = 2.5;
@@ -108,8 +109,8 @@ export default class demo {
         }
         //添加目标点3 Torus
         {
-            let torus = new Object3D();
-            let mr = torus.addComponent(MeshRenderer);
+            const torus = new Object3D();
+            const mr = torus.addComponent(MeshRenderer);
             mr.geometry = new TorusGeometry(5, 0.5);
             mr.material = mat;
             torus.y = 2;
@@ -119,8 +120,8 @@ export default class demo {
         }
         //添加目标点4 box
         {
-            let box = new Object3D();
-            let mr = box.addComponent(MeshRenderer);
+            const box = new Object3D();
+            const mr = box.addComponent(MeshRenderer);
             mr.geometry = new BoxGeometry(5, 2, 3);
             mr.material = mat;
             box.y = 1;
@@ -152,9 +153,9 @@ export default class demo {
                 this.flyController.enable = false;
                 this.hoverController.enable = true;
                 this.hoverController.setCamera(0, -30, 30, new Vector3(0, 0, 0));
-            }
+            },
         };
-        let ChangeCamera = gui.addFolder("ChangeCamera");
+        const ChangeCamera = gui.addFolder("ChangeCamera");
         ChangeCamera.add(changeCamera, "transformCamera");
         ChangeCamera.add(changeCamera, "lookatCamera");
         ChangeCamera.add(changeCamera, "flyCamera");
@@ -162,7 +163,7 @@ export default class demo {
         ChangeCamera.open();
 
         //当transformCamera生效时，直接改变相机的位置和旋转来控制相机
-        let transformCamera = gui.addFolder("transformCamera");
+        const transformCamera = gui.addFolder("transformCamera");
         transformCamera.add(this.transformCamera.transform, "x", -30, 30, 0.1);
         transformCamera.add(this.transformCamera.transform, "y", -30, 30, 0.1);
         transformCamera.add(this.transformCamera.transform, "z", -30, 30, 0.1);
@@ -171,14 +172,14 @@ export default class demo {
         transformCamera.open();
 
         //当lookatCamera生效时，直接改变相机的位置和目标点来控制相机
-        let lookatCamera = gui.addFolder("lookatCamera");
-        let LookatCamera = {
+        const lookatCamera = gui.addFolder("lookatCamera");
+        const LookatCamera = {
             positionX: 0,
             positionY: 10,
             positionZ: 30,
             targetX: 0,
             targetY: 0,
-            targetZ: 0
+            targetZ: 0,
         };
         lookatCamera.add(LookatCamera, "positionX", -30, 30, 0.1).onChange(() => {
             this.lookatCamera.lookAt(new Vector3(LookatCamera.positionX, LookatCamera.positionY, LookatCamera.positionZ), new Vector3(LookatCamera.targetX, LookatCamera.targetY, LookatCamera.targetZ));
@@ -201,15 +202,15 @@ export default class demo {
         lookatCamera.open();
 
         //可调整fly控制器的移动速度和按下shift速度的倍数
-        let flyCamera = gui.addFolder("flyCamera");
+        const flyCamera = gui.addFolder("flyCamera");
         flyCamera.add(this.flyController, "moveSpeed", 0, 10, 0.1);
         flyCamera.add(this.flyController.config, "shiftMoveScale", 0, 10, 1);
         flyCamera.add({ tip: "移动时按下shift加速" }, "tip");
         flyCamera.open();
 
         //可通过按钮切换相机的视角 三个smooth属性可调整过渡时间更快或者更慢
-        let hoverCamera = gui.addFolder("hoverCamera");
-        let HoverCamera = {
+        const hoverCamera = gui.addFolder("hoverCamera");
+        const HoverCamera = {
             resetView: () => {
                 this.hoverController.setCamera(0, -30, 30, new Vector3(0, 0, 0));
             },
@@ -224,7 +225,7 @@ export default class demo {
             },
             view4: () => {
                 this.hoverController.setCamera(0, -30, 20, new Vector3(15, 0, 15));
-            }
+            },
         };
         hoverCamera.add(HoverCamera, "resetView");
         hoverCamera.add(HoverCamera, "view1");

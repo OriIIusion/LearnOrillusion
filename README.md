@@ -1,13 +1,8 @@
-# 总述
-
-本仓库是我学习Orillusion过程中的记录，同时我也会在我的公众号(蔬菜狗)上将过程以文字形式记录下来，供新手学习。
-
 ## 安装与运行
 
 ```text
+git clone https://github.com/OriIIusion/LearnOrillusion.git
+git submodule update --init
 pnpm install
 pnpm run dev
 ```
-
-## 注意事项
-运行的是demo.ts中的代码，可复制同路径下其他ts文件中的代码来观看每个文件的最终效果。

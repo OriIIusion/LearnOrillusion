@@ -1,5 +1,5 @@
-import { BoxGeometry, Camera3D, Engine3D, LitMaterial, MeshRenderer, Object3D, Scene3D, View3D, Object3DUtil, Vector3, AtmosphericComponent, ColliderComponent, BoxColliderShape, KeyEvent, SphereColliderShape, DirectLight, SphereGeometry, ComponentBase, KeyCode, KelvinUtil } from '@orillusion/core';
-import { Stats } from '@orillusion/stats';
+import { BoxGeometry, Camera3D, Engine3D, LitMaterial, MeshRenderer, Object3D, Scene3D, View3D, Object3DUtil, Vector3, AtmosphericComponent, ColliderComponent, BoxColliderShape, KeyEvent, SphereColliderShape, DirectLight, SphereGeometry, ComponentBase, KeyCode, KelvinUtil } from "@orillusion/core";
+import { Stats } from "@orillusion/stats";
 import { Ammo, Physics, Rigidbody } from "@orillusion/physics";
 
 export default class demo {
@@ -13,36 +13,37 @@ export default class demo {
     objIndex: number;
     tempObj: Object3D;
     async run() {
-        console.log("05.小球吃盒子");
-        //物理系统与引擎初始化 
+        console.log("小球吃盒子");
+        //物理系统与引擎初始化
         await Physics.init();
         await Engine3D.init({
-            renderLoop: () => this.loop()
+            renderLoop: () => this.loop(),
         });
         //设置阴影
         Engine3D.setting.shadow.updateFrameRate = 1;
         Engine3D.setting.shadow.shadowSize = 2048;
-        //获取ammo原生物理世界以实现更多自定义需求
+        Engine3D.setting.shadow.shadowBias = 0.01;
+        //获取ammo原生物理世界以实现更多自定义需求aaaaa
         this.ammoWorld = Physics.world;
 
         //新建场景 添加天空盒子和性能统计
-        let scene = new Scene3D();
-        let sky = scene.addComponent(AtmosphericComponent);
+        const scene = new Scene3D();
+        const sky = scene.addComponent(AtmosphericComponent);
         scene.addComponent(Stats);
 
         //新建相机
-        let cameraObj = new Object3D();
-        let camera = cameraObj.addComponent(Camera3D);
+        const cameraObj = new Object3D();
+        const camera = cameraObj.addComponent(Camera3D);
         //开启联级阴影贴图 无需再设置阴影范围(shadowBound)
         camera.enableCSM = true;
         camera.perspective(60, Engine3D.aspect, 1, 5000);
         camera.lookAt(new Vector3(0, 40, 35), new Vector3());
         scene.addChild(cameraObj);
 
-        //添加光源 
-        let lightObj = new Object3D();
-        let light = lightObj.addComponent(DirectLight);
-        light.intensity = 50;
+        //添加光源
+        const lightObj = new Object3D();
+        const light = lightObj.addComponent(DirectLight);
+        light.intensity = 2;
         light.castShadow = true;
         lightObj.rotationX = 60;
         lightObj.rotationY = 80;
@@ -66,59 +67,49 @@ export default class demo {
     }
     private createFloor() {
         //创建地面以及四周围栏
-        let floor = Object3DUtil.GetSingleCube(50, 1, 50, 0.3, 0.3, 0.6);
-        let border1 = Object3DUtil.GetSingleCube(50, 5, 1, 0.3, 0.3, 0.6);
-        let border2 = Object3DUtil.GetSingleCube(50, 5, 1, 0.3, 0.3, 0.6);
-        let border3 = Object3DUtil.GetSingleCube(50, 5, 1, 0.3, 0.3, 0.6);
-        let border4 = Object3DUtil.GetSingleCube(50, 5, 1, 0.3, 0.3, 0.6);
-        //添加刚体组件 不动的物体质量设置为0 
-        let rigidbody = floor.addComponent(Rigidbody);
-        let rigidbody1 = border1.addComponent(Rigidbody);
-        let rigidbody2 = border2.addComponent(Rigidbody);
-        let rigidbody3 = border3.addComponent(Rigidbody);
-        let rigidbody4 = border4.addComponent(Rigidbody);
+        const floor = Object3DUtil.GetSingleCube(50, 1, 50, 0.3, 0.3, 0.6);
+        const border1 = Object3DUtil.GetSingleCube(50, 5, 1, 0.3, 0.3, 0.6);
+        const border2 = Object3DUtil.GetSingleCube(50, 5, 1, 0.3, 0.3, 0.6);
+        const border3 = Object3DUtil.GetSingleCube(50, 5, 1, 0.3, 0.3, 0.6);
+        const border4 = Object3DUtil.GetSingleCube(50, 5, 1, 0.3, 0.3, 0.6);
+        //添加刚体组件 不动的物体质量设置为0
+        const rigidbody = floor.addComponent(Rigidbody);
+        const rigidbody1 = border1.addComponent(Rigidbody);
+        const rigidbody2 = border2.addComponent(Rigidbody);
+        const rigidbody3 = border3.addComponent(Rigidbody);
+        const rigidbody4 = border4.addComponent(Rigidbody);
         rigidbody.mass = rigidbody1.mass = rigidbody2.mass = rigidbody3.mass = rigidbody4.mass = 0;
         //添加碰撞体组件 大小与模型一样
-        let collider = floor.addComponent(ColliderComponent);
+        const collider = floor.addComponent(ColliderComponent);
         collider.shape = new BoxColliderShape();
         collider.shape.size = new Vector3(50, 1, 50);
-        let colshape = new BoxColliderShape();
+        const colshape = new BoxColliderShape();
         colshape.size = new Vector3(50, 5, 1);
-        let collider1 = border1.addComponent(ColliderComponent);
-        let collider2 = border2.addComponent(ColliderComponent);
-        let collider3 = border3.addComponent(ColliderComponent);
-        let collider4 = border4.addComponent(ColliderComponent);
+        const collider1 = border1.addComponent(ColliderComponent);
+        const collider2 = border2.addComponent(ColliderComponent);
+        const collider3 = border3.addComponent(ColliderComponent);
+        const collider4 = border4.addComponent(ColliderComponent);
         collider1.shape = collider2.shape = collider3.shape = collider4.shape = colshape;
         //摆放位置
-        border1.y = 3
-        border1.z = 24.5
-        border2.y = 3
-        border2.z = -24.5
-        border3.y = 3
-        border3.x = 24.5
-        border3.rotationY = 90
-        border4.y = 3
-        border4.x = -24.5
-        border4.rotationY = 90
+        border1.y = 3;
+        border1.z = 24.5;
+        border2.y = 3;
+        border2.z = -24.5;
+        border3.y = 3;
+        border3.x = 24.5;
+        border3.rotationY = 90;
+        border4.y = 3;
+        border4.x = -24.5;
+        border4.rotationY = 90;
         //设置摩擦力和弹力
         rigidbody.rollingFriction = 10;
         rigidbody1.restitution = rigidbody2.restitution = rigidbody3.restitution = rigidbody4.restitution = 0.3;
         //设置index为-1，方便从碰撞信息中剔除小球与地面墙面的碰撞
-        rigidbody.addInitedFunction(() => {
-            rigidbody.btRigidbody.setUserIndex(-1);
-        }, this)
-        rigidbody1.addInitedFunction(() => {
-            rigidbody1.btRigidbody.setUserIndex(-1)
-        }, this)
-        rigidbody2.addInitedFunction(() => {
-            rigidbody2.btRigidbody.setUserIndex(-1)
-        }, this)
-        rigidbody3.addInitedFunction(() => {
-            rigidbody3.btRigidbody.setUserIndex(-1)
-        }, this)
-        rigidbody4.addInitedFunction(() => {
-            rigidbody4.btRigidbody.setUserIndex(-1)
-        }, this)
+        rigidbody.userIndex = -1;
+        rigidbody1.userIndex = -1;
+        rigidbody2.userIndex = -1;
+        rigidbody3.userIndex = -1;
+        rigidbody4.userIndex = -1;
         this.view.scene.addChild(floor);
         this.view.scene.addChild(border1);
         this.view.scene.addChild(border2);
@@ -127,53 +118,47 @@ export default class demo {
     }
     private createFoods() {
         //制作好一个box样本
-        let boxobj = new Object3D();
-        let mr = boxobj.addComponent(MeshRenderer);
+        const boxobj = new Object3D();
+        const mr = boxobj.addComponent(MeshRenderer);
         mr.geometry = new BoxGeometry(2, 2, 2);
         mr.material = new LitMaterial();
         //提前创建好碰撞体形状大小 可复用
-        let boxColliderShape = new BoxColliderShape();
+        const boxColliderShape = new BoxColliderShape();
         boxColliderShape.size = new Vector3(2, 2, 2);
         for (let index = 0; index < 10; index++) {
-            let boxObj = boxobj.clone();
+            const boxObj = boxobj.clone();
             boxObj.y = 2;
             boxObj.x = Math.random() * 40 - 20;
             boxObj.z = Math.random() * 40 - 20;
-            let rig = boxObj.addComponent(Rigidbody);
+            const rig = boxObj.addComponent(Rigidbody);
             rig.mass = 0;
-            let col = boxObj.addComponent(ColliderComponent);
+            const col = boxObj.addComponent(ColliderComponent);
             col.shape = boxColliderShape;
-            rig.addInitedFunction(() => {
-                //获取ammo的原生rigidbody
-                let btrig = rig.btRigidbody;
-                //Flags设置为4，代表是一个触发器，只检测碰撞而不参与碰撞
-                btrig.setCollisionFlags(4);
-                //设置原生rigidbody的UserIndex，从而可以从碰撞信息中筛选出小球碰到了哪个Box
-                btrig.setUserIndex(index)
-                //将box存到数组中，以备后续的使用
-                this.foods[index] = boxObj;
-            }, this)
-            boxObj.addComponent(RotateScript)
+            rig.isTrigger = true;
+            rig.userIndex = index;
+            //将box存到数组中，以备后续的使用
+            this.foods[index] = boxObj;
+
+            boxObj.addComponent(RotateScript);
             this.view.scene.addChild(boxObj);
         }
     }
     private createBall() {
         //添加可操控的小球
-        let sphereObj = new Object3D();
-        let mr = sphereObj.addComponent(MeshRenderer);
+        const sphereObj = new Object3D();
+        const mr = sphereObj.addComponent(MeshRenderer);
         mr.geometry = new SphereGeometry(1, 20, 20);
-        let mat = new LitMaterial();
+        const mat = new LitMaterial();
         mr.material = mat;
         mat.baseColor = KelvinUtil.color_temperature_to_rgb(1325);
         sphereObj.y = 5;
         //添加移动组件
-        let moveScript = sphereObj.addComponent(MoveScript);
+        const moveScript = sphereObj.addComponent(MoveScript);
         moveScript.rigidbody = sphereObj.addComponent(Rigidbody);
-        moveScript.rigidbody.addInitedFunction(() => {
-            moveScript.rigidbody.btRigidbody.setUserIndex(-1);
-        }, this)
+        moveScript.rigidbody.userIndex = -1;
+        // moveScript.rigidbody.btRigidbody.setUserIndex(-1);
         moveScript.rigidbody.mass = 10;
-        let collider = sphereObj.addComponent(ColliderComponent);
+        const collider = sphereObj.addComponent(ColliderComponent);
         collider.shape = new SphereColliderShape(1);
         this.view.scene.addChild(sphereObj);
     }
@@ -192,9 +177,9 @@ export default class demo {
                     //如果碰撞信息中的两个原生rigidbody的UserIndex有任一个大于-1，则意味着小球碰到了盒子
                     if (this.Manifold.getBody0().getUserIndex() > -1 || this.Manifold.getBody1().getUserIndex() > -1) {
                         //获取小球和盒子的UserIndex更大的那个值，也就是盒子的UserIndex
-                        this.objIndex = Math.max(this.Manifold.getBody0().getUserIndex(), this.Manifold.getBody1().getUserIndex())
+                        this.objIndex = Math.max(this.Manifold.getBody0().getUserIndex(), this.Manifold.getBody1().getUserIndex());
                         //从数组中取出该盒子并销毁
-                        this.tempObj = this.foods[this.objIndex]
+                        this.tempObj = this.foods[this.objIndex];
                         if (this.tempObj) {
                             this.foods[this.objIndex] = undefined;
                             this.tempObj.destroy();
@@ -218,35 +203,29 @@ class MoveScript extends ComponentBase {
     y: number = 0;
     direction: Vector3 = new Vector3();
     init(): void {
-        Engine3D.inputSystem.addEventListener(KeyEvent.KEY_DOWN, this.keyDown, this)
-        Engine3D.inputSystem.addEventListener(KeyEvent.KEY_UP, this.keyUp, this)
+        Engine3D.inputSystem.addEventListener(KeyEvent.KEY_DOWN, this.keyDown, this);
+        Engine3D.inputSystem.addEventListener(KeyEvent.KEY_UP, this.keyUp, this);
     }
     private keyDown(e: KeyEvent) {
         if (e.keyCode == KeyCode.Key_A) {
-            this.left = true
-        }
-        else if (e.keyCode == KeyCode.Key_D) {
-            this.right = true
-        }
-        else if (e.keyCode == KeyCode.Key_W) {
-            this.forward = true
-        }
-        else if (e.keyCode == KeyCode.Key_S) {
-            this.back = true
+            this.left = true;
+        } else if (e.keyCode == KeyCode.Key_D) {
+            this.right = true;
+        } else if (e.keyCode == KeyCode.Key_W) {
+            this.forward = true;
+        } else if (e.keyCode == KeyCode.Key_S) {
+            this.back = true;
         }
     }
     private keyUp(e: KeyEvent) {
         if (e.keyCode == KeyCode.Key_A) {
-            this.left = false
-        }
-        else if (e.keyCode == KeyCode.Key_D) {
-            this.right = false
-        }
-        else if (e.keyCode == KeyCode.Key_W) {
-            this.forward = false
-        }
-        else if (e.keyCode == KeyCode.Key_S) {
-            this.back = false
+            this.left = false;
+        } else if (e.keyCode == KeyCode.Key_D) {
+            this.right = false;
+        } else if (e.keyCode == KeyCode.Key_W) {
+            this.forward = false;
+        } else if (e.keyCode == KeyCode.Key_S) {
+            this.back = false;
         }
     }
     //循环中尽量不要new东西
@@ -261,7 +240,7 @@ class MoveScript extends ComponentBase {
             //将前后左右四个状态转化成数值，false对应0，true对应1，将x和y填入Vector3中，就可得到最终的移动方向
             this.x = -1 * Number(this.left) + Number(this.right);
             this.y = -1 * Number(this.forward) + Number(this.back);
-            this.direction.set(this.x * this.speed, 0, this.y * this.speed)
+            this.direction.set(this.x * this.speed, 0, this.y * this.speed);
             this.rigidbody.velocity = this.direction;
         }
     }

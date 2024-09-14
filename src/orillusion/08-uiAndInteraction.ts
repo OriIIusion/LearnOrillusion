@@ -11,7 +11,7 @@ export default class demo {
     poiGroup: Object3D[] = [];
     boardGroup: Object3D[] = [];
     async run() {
-        console.log("07.UI与交互");
+        console.log("UI与交互");
         //init engine
         await Engine3D.init();
 
@@ -19,6 +19,7 @@ export default class demo {
         Engine3D.setting.shadow.updateFrameRate = 1;
         Engine3D.setting.shadow.shadowSize = 2048;
         Engine3D.setting.shadow.shadowBound = 64;
+        Engine3D.setting.shadow.shadowBias = 0.01;
 
         //create scene,add sky and fps
         let scene = new Scene3D();
@@ -34,7 +35,7 @@ export default class demo {
         //add DirectLight
         let lightObj = new Object3D();
         let light = lightObj.addComponent(DirectLight);
-        light.intensity = 50;
+        light.intensity = 2;
         light.castShadow = true;
         lightObj.rotationX = 60;
         lightObj.rotationY = 60;

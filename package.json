@@ -9,17 +9,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@orillusion/core": "^0.7.2",
-    "@orillusion/graphic": "^0.1.1",
-    "@orillusion/physics": "^0.2.2",
-    "@orillusion/stats": "^0.2.2",
-    "@types/d3": "^7.4.3",
-    "@types/dat.gui": "^0.7.12",
+    "@orillusion/core": "^0.8.3",
+    "@orillusion/geometry": "^0.2.4",
+    "@orillusion/graphic": "^0.2.2",
+    "@orillusion/physics": "^0.3.4",
+    "@orillusion/stats": "^0.2.6",
     "d3": "^7.9.0",
     "dat.gui": "^0.7.9",
     "vue": "^3.4.15"
   },
   "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "@types/dat.gui": "^0.7.12",
     "@vitejs/plugin-vue": "^4.6.2",
     "typescript": "^5.3.3",
     "vite": "^4.5.2",
