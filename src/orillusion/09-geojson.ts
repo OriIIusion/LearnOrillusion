@@ -18,7 +18,7 @@ export default class demo {
     //鼠标移入板块时的颜色
     hoverColor: Color = new Color(0.9, 0.7, 0.5);
     hoverMat: LitMaterial;
-    //板块高度材质
+    //板块材质
     bodyMat: LitMaterial[] = [];
     shapeMat: LitMaterial[] = [];
     //经纬度转换为平面坐标(墨卡托投影)
@@ -40,6 +40,8 @@ export default class demo {
         camera.perspective(70, Engine3D.aspect, 1, 2000);
         this.controller = camera.object3D.addComponent(HoverCameraController);
         this.controller.setCamera(0, -60, 70);
+        this.controller.topClamp = -90;
+        // this.controller.bottomClamp = -10;
 
         //add DirectLights
         const lightObj = new Object3D();
@@ -87,7 +89,7 @@ export default class demo {
         }
     }
     private async LoadRes() {
-        //get canvas,load font,load texture
+        //get canvas,load font
         this.canvas = this.view.enableUICanvas();
         this.font = await Engine3D.res.loadFont("/font/alibabapuhuiti-light.fnt");
     }
@@ -102,7 +104,7 @@ export default class demo {
         this.maker = Shape3DMaker.makeRenderer("shape", bitmapTexture2DArray, this.view.scene, 1000, 1000);
         this.maker.renderer.material.doubleSide = true;
 
-        //设置板块高度部分的材质
+        //设置板块材质 分为两部分
         for (let index = 0; index < this.shapeColor.length; index++) {
             this.bodyMat[index] = new LitMaterial();
             this.bodyMat[index].baseColor = this.shapeColor[index];
@@ -113,10 +115,13 @@ export default class demo {
             this.shapeMat[index].emissiveColor = this.shapeColor[index];
             this.shapeMat[index].emissiveIntensity = 1;
         }
+
+        //鼠标悬浮材质
         this.hoverMat = new LitMaterial();
         this.hoverMat.baseColor = this.hoverColor;
         this.hoverMat.emissiveColor = this.hoverColor;
         this.hoverMat.emissiveIntensity = 0.7;
+
         //加载geojson
         const mapJson = await Engine3D.res.loadJSON("/geojson/中华人民共和国.json");
         this.container = new Object3D();
@@ -125,7 +130,7 @@ export default class demo {
         await mapJson["features"].forEach((feature, index) => {
             //每个feature中，properties代表本区域的基本信息，geomrtry.coordinates代表区域所有的点的坐标
             const coordinates = feature.geometry.coordinates;
-            //随机高度，使各板块高度不一样
+            //随机高度，使各板块高度不一样(4~5)
             const height = Math.random() * 1 + 4;
             //初始化该板块的shape数组
             this.mrArr[index] = [];
@@ -133,7 +138,7 @@ export default class demo {
             coordinates.forEach((multiPolygon) => {
                 multiPolygon.forEach((polygon) => {
                     this.createBody(polygon, height, index);
-                    this.createShape(polygon, height, index);
+                    this.createShape(polygon, height);
                 });
             });
             //根据位置生成省份名称，34不是省份板块(是十段线)，所以跳过
@@ -178,7 +183,7 @@ export default class demo {
     }
     //给每个省份添加板块高度
     private async createBody(coor: [number, number][], height: number, index: number) {
-        //shape是板块的形状，path是板块挤出的路径
+        //shape是板块的形状
         const points: Vector2[] = [];
 
         coor.forEach((element) => {
@@ -186,7 +191,6 @@ export default class demo {
             points.push(new Vector2(arr[0], -arr[1]));
         });
         const shape = new Shape2D(points);
-
         //使用ExtrudeGeometry生成板块的高度部分
         const obj = new Object3D();
         const mr = obj.addComponent(MeshRenderer);
@@ -199,8 +203,8 @@ export default class demo {
         this.mrArr[index].push(mr);
         this.container.addChild(obj);
     }
-    //给每个省份板块添加上面的面以及边界线
-    private async createShape(coor: any, height: number, index: number) {
+    //给每个省份板块添加边界线
+    private async createShape(coor: any, height: number) {
         const points: Vector2[] = [];
         coor.forEach((element) => {
             const arr = this.projection(element);
